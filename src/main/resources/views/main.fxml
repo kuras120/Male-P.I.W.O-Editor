@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Button?>
 
-<GridPane fx:controller="editor.Controller" fx:id="mainGrid" gridLinesVisible="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-</GridPane>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+
+<BorderPane fx:controller="editor.Controller" xmlns:fx="http://javafx.com/fxml/1" xmlns:="http://javafx.com/javafx/8.0.172-ea" >
+    <top>
+        <HBox prefHeight="100" alignment="center" spacing="15">
+            <fx:define>
+                <ToggleGroup fx:id="powerToggleGroup"/>
+            </fx:define>
+            <Button text="Connect with Raspberry" fx:id="btnConnectRby" style="-fx-font: 15 arial" onAction="#onButtonRspClicked" />
+            <ToggleButton text="Turn on" fx:id="btnTurnOn" style="-fx-background-color: linear-gradient(#19d132, #00ff22); -fx-font: 15 arial" toggleGroup="$powerToggleGroup" onAction="#onButtonTurnOnClicked" />
+            <ToggleButton text="Turn off" fx:id="brnTurnOff" style="-fx-background-color: linear-gradient(#ff5400, #be1d00);-fx-font: 15 arial; -fx-text-fill: black" toggleGroup="$powerToggleGroup" onAction="#onButtonTurnOffClicked" />
+            <Button text="Connect with Speaker" fx:id="btnConnectSpk" style="-fx-font: 15 arial" onAction="#onButtonSpkClicked" />
+            <Button text="Load an animation" fx:id ="btnLoad" style="-fx-font: 15 arial" onAction="#onButtonLoadClicked"/>
+        </HBox>
+    </top>
+    <center>
+        <GridPane fx:id="mainGrid" gridLinesVisible="true" xmlns="http://javafx.com/javafx/8.0.172-ea" >
+        </GridPane>
+    </center>
+</BorderPane>
+
+

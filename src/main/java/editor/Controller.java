@@ -3,6 +3,10 @@ package editor;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.*;
+import javafx.event.ActionEvent;
+import javafx.stage.FileChooser;
+import javafx.scene.control.ToggleButton;
+import java.io.File;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,9 +16,51 @@ public class Controller implements Initializable {
     @FXML
     private GridPane mainGrid;
 
+
+
+    @FXML //Action to connect with Raspberry
+    public void onButtonRspClicked()
+    {
+        System.out.printf("Connected");
+    }
+    @FXML  //action to turn on
+    public void onButtonTurnOnClicked()
+    {
+        System.out.printf("Turned on");
+    }
+    @FXML  //action to turn off
+    public  void onButtonTurnOffClicked()
+    {
+        System.out.printf("Turned off");
+    }
+    @FXML //connecting with speakers
+    public void onButtonSpkClicked()
+    {
+        System.out.printf("Connected");
+    }
+    @FXML //loading animation
+    public void onButtonLoadClicked()
+    {
+        FileChooser fc = new FileChooser();
+        File selectedFile = fc.showOpenDialog(null);
+
+        if(selectedFile != null){
+            System.out.printf("File has been loaded: " + selectedFile.getName());
+        }else
+        {
+            System.out.printf("Invalid file");
+        }
+    }
+
+
+
+
+
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        int numCols = 4 ;
-        int numRows = 4 ;
+        int numCols = 5 ;
+        int numRows = 5 ;
+
+
 
         for (int i = 0 ; i < numCols ; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
