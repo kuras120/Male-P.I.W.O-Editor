@@ -8,7 +8,7 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 
-<BorderPane fx:controller="editor.Controller" xmlns:fx="http://javafx.com/fxml/1" xmlns:="http://javafx.com/javafx/8.0.172-ea" >
+<BorderPane fx:controller="editor.Controller" xmlns:fx="http://javafx.com/fxml/1" xmlns:="http://javafx.com/javafx/11.0.1" >
     <top>
         <HBox prefHeight="100" alignment="center" spacing="15">
             <fx:define>
@@ -22,7 +22,7 @@
         </HBox>
     </top>
     <center>
-        <GridPane fx:id="mainGrid" gridLinesVisible="true" xmlns="http://javafx.com/javafx/8.0.172-ea" >
+        <GridPane fx:id="mainGrid" gridLinesVisible="true" >
         </GridPane>
     </center>
 </BorderPane>
