@@ -13,6 +13,7 @@ import java.io.*;
 
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Enumeration;
 import java.util.ResourceBundle;
 import java.util.zip.*;
 
@@ -92,18 +93,6 @@ public class Controller implements Initializable {
         System.out.printf("Connected");
     }
 
-    public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-        File destFile = new File(destinationDir, zipEntry.getName());
-
-        String destDirPath = destinationDir.getCanonicalPath();
-        String destFilePath = destFile.getCanonicalPath();
-
-        if (!destFilePath.startsWith(destDirPath + File.separator)) {
-            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
-        }
-
-        return destFile;
-    }
 
     @FXML //loading animation
     public void onButtonLoadClicked() throws IOException {
@@ -112,22 +101,32 @@ public class Controller implements Initializable {
         if (selectedFile != null) {
             System.out.printf("File has been loaded: " + selectedFile.getName());
             byte[] buffer = new byte[1024];
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(selectedFile));
-            ZipEntry zipEntry = zis.getNextEntry();
-            File destDir = new File(selectedFile.getParent());
-            while (zipEntry != null) {
-                System.out.println(destDir);
-                File newFile = newFile(destDir, zipEntry);
-                FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
+            ZipFile zip = new ZipFile(selectedFile.getCanonicalPath());
+            Enumeration<? extends ZipEntry> entries = zip.entries();
+            while(entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String path = entry.getName();
+
+                if(path.endsWith("/")) {
+                    File dir = new File(selectedFile.getParent()+"/"+path);
+                    if(!dir.exists()){
+                        dir.mkdirs();
+                    }
+                }else {
+                    FileOutputStream fos = new FileOutputStream(selectedFile.getParent()+"/"+path);
+                    InputStream is = zip.getInputStream(entry);
+                    int len;
+                    while((len = is.read(buffer)) > 0){
+                        fos.write(buffer, 0, len);
+                    }
+                    is.close();
+                    fos.close();
                 }
-                fos.close();
-                zipEntry = zis.getNextEntry();
+
+
+
             }
-            zis.closeEntry();
-            zis.close();
+
 
         } else {
             System.out.printf("Invalid file");
