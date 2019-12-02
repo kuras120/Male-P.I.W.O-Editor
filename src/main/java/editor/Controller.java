@@ -2,10 +2,12 @@ package editor;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -53,6 +55,8 @@ public class Controller implements Initializable {
     Button clrFrameBtn;
     @FXML
     TextField frameCounter;
+    @FXML
+    Button loadMusicFile;
 
     public String getParsableString(String string) {
         try{
@@ -106,6 +110,23 @@ public class Controller implements Initializable {
     @FXML //connecting with speakers
     public void onButtonSpkClicked() {
         System.out.printf("Connected");
+    }
+    @FXML //loading music file
+    public void onButtonLoadMusicFile(){
+        FileChooser fc = new FileChooser();
+        File selectedFile = fc.showOpenDialog(null);
+        if(selectedFile != null){
+            if(selectedFile.getName().endsWith("wav")){
+                setMusicTitle(selectedFile.getName());
+                System.out.println("Zostal wybrany plik: " + selectedFile.getName());
+
+            }
+            else{
+                System.out.println("To nie jest plik wav");
+            }
+        }
+
+
     }
 
     public void setAnimationName(String name) {
@@ -207,7 +228,7 @@ public class Controller implements Initializable {
 
                     frameCount++;
 
-
+                    frameCounter.setText(String.valueOf(selectedFrame + 1) + '/' + String.valueOf(data.frames.size()));
                 }
             }
 
@@ -230,6 +251,7 @@ public class Controller implements Initializable {
     public void newFrame() {
         data.frames.add(selectedFrame + 1, new Frame());
         loadFrame(++selectedFrame);
+        data.frames.get(selectedFrame).frame_index = selectedFrame;
         frameCounter.setText(String.valueOf(selectedFrame + 1) + '/' + String.valueOf(data.frames.size()));
     }
 
@@ -242,7 +264,9 @@ public class Controller implements Initializable {
             loadFrame(selectedFrame);
             frameCounter.setText(String.valueOf(selectedFrame + 1) + '/' + String.valueOf(data.frames.size()));
         } else {
+
             clearFrame();
+
         }
     }
 
@@ -265,12 +289,59 @@ public class Controller implements Initializable {
     }
 
     @FXML //saving animation
-    public void onButtonSaveClicked() {
+    public void onButtonSaveClicked() throws IOException{
+
+        if(getAnimationName().equals("")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText("Podaj nazwe animacji!");
+            alert.showAndWait();
+        }
+        else {
+            File dir = new File("animations/"+ getAnimationName());
+            if(!dir.exists()) {
+                dir.mkdir();
+
+                JsonWriter writer = new JsonWriter(new FileWriter(dir.getPath()+"/meta_template.json"));
+                writer.setIndent("  ");
+                writer.beginObject();
+                writer.name("frame_count").value(data.frames.size());
+                writer.name("frame_duration").value(getFrameDuration());
+                writer.name("music_file").value(getMusicTitle());
+                writer.name("animation_name").value(getAnimationName());
+                writer.name("description").value(getDescOfAnim());
+                writer.endObject();
+                writer.close();
+
+                for(int i=0; i<data.frames.size(); i++) {
+                    int count = 0;
+                    // System.out.printf("NUMER FRAME: %d\n", data.frames.get(i).frame_index);
+                    Frame frame = data.frames.get(i);
+                    byte buffer[] = new byte[32 * 16 * 3];
+                    for (int k = 15; k >= 0; k--) {
+                        for (int j = 0; j < 32; j++) {
+
+                            buffer[count] = (byte) frame.matrix[j][k][0] ;
+                            buffer[count + 1] = (byte) frame.matrix[j][k][1];
+                            buffer[count + 2] = (byte) frame.matrix[j][k][2];
+                            System.out.printf( "PIXEL: %d,",((int) buffer[count] & 0xFF));
+                            System.out.printf( "%d,",((int) buffer[count + 1] & 0xFF));
+                            System.out.printf( "%d\n",((int) buffer[count + 2] & 0xFF));
+                            count += 3;
 
 
+                        }
+                    }
+
+                }
+
+            }
+
+        }
 
 
     }
+
+
 
     @FXML
     public void clearFrame() {

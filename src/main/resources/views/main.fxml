@@ -76,7 +76,7 @@
             <TextField fx:id="animName" alignment="CENTER" layoutY="68.0" prefHeight="25.0" prefWidth="190.0" />
             <Label layoutX="-1.0" layoutY="229.0" text="Music file:" />
             <TextField fx:id="musicTitle" alignment="CENTER" editable="false" layoutX="1.0" layoutY="246.0" prefHeight="25.0" prefWidth="189.0" />
-            <Button fx:id="btnConnectRby12" layoutX="30.0" layoutY="278.0" onAction="#onButtonRspClicked" prefHeight="27.0" prefWidth="140.0" style="-fx-font: 15 arial" text="Load" />
+            <Button fx:id="loadMusicFile" layoutX="30.0" layoutY="278.0" onAction="#onButtonLoadMusicFile" prefHeight="27.0" prefWidth="140.0" style="-fx-font: 15 arial" text="Load" />
             <Label layoutX="17.0" layoutY="477.0" text="Color:" />
             <Label layoutX="57.0" layoutY="449.0" text="Edit frame">
                <font>
