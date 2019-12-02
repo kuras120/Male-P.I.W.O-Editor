@@ -1,13 +1,19 @@
 package editor;
 
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
 
 import java.io.*;
 
@@ -23,9 +29,18 @@ public class Controller implements Initializable {
     int numRows = 16;
     Pane[][] paneMatrix = new Pane[numCols][numRows];
     int selectedFrame = 0;
+    String dirName;
 
     @FXML
     private GridPane mainGrid;
+    @FXML
+    TextField animName;
+    @FXML
+    TextField musicTitle;
+    @FXML
+    TextField frameDuration;
+    @FXML
+    TextArea descOfAnim;
     @FXML
     TextField R_color_field;
     @FXML
@@ -93,13 +108,38 @@ public class Controller implements Initializable {
         System.out.printf("Connected");
     }
 
+    public void setAnimationName(String name) {
+        animName.setText(name);
+    }
+    public void setMusicTitle(String title) {
+        musicTitle.setText(title);
+    }
+    public void setFrameDuration(Integer count) {
+        frameDuration.setText(Integer.toString(count));
+    }
+    public void setDescOfAnim(String desc) {
+        descOfAnim.setText(desc);
+    }
+    public String getAnimationName(){
+        return animName.getText();
+    }
+    public String getMusicTitle() {
+        return musicTitle.getText();
+    }
+    public String getDescOfAnim(){
+        return descOfAnim.getText();
+    }
+    public Integer getFrameDuration(){
+        return Integer.parseInt(frameDuration.getText());
+    }
 
     @FXML //loading animation
     public void onButtonLoadClicked() throws IOException {
         FileChooser fc = new FileChooser();
         File selectedFile = fc.showOpenDialog(null);
+
         if (selectedFile != null) {
-            System.out.printf("File has been loaded: " + selectedFile.getName());
+            System.out.printf("File has been loaded: " + selectedFile.getName() + "\n");
             byte[] buffer = new byte[1024];
             ZipFile zip = new ZipFile(selectedFile.getCanonicalPath());
             Enumeration<? extends ZipEntry> entries = zip.entries();
@@ -109,6 +149,7 @@ public class Controller implements Initializable {
 
                 if(path.endsWith("/")) {
                     File dir = new File(selectedFile.getParent()+"/"+path);
+                    dirName = selectedFile.getParent()+"/"+path;
                     if(!dir.exists()){
                         dir.mkdirs();
                     }
@@ -123,9 +164,53 @@ public class Controller implements Initializable {
                     fos.close();
                 }
 
-
-
             }
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new FileReader(dirName + "/meta_template.json"));
+            JsonElement json = gson.fromJson(reader, JsonElement.class);
+
+            String jsonInString = gson.toJson(json);
+            System.out.printf(jsonInString);
+            JsonObject jsonObject = (JsonObject) json;
+            Integer arraySize = jsonObject.get("frame_count").getAsInt();
+
+            setAnimationName(jsonObject.get("animation_name").getAsString());
+            setMusicTitle(jsonObject.get("music_file").getAsString());
+            setDescOfAnim(jsonObject.get("description").getAsString());
+            setFrameDuration(jsonObject.get("frame_duration").getAsInt());
+
+            File dirAnim = new File(dirName);
+
+            for(File fileEntry : dirAnim.listFiles()) {
+                Frame frame = new Frame();
+                int frameCount=1;
+                if(fileEntry.getName().endsWith("bmp")){
+                    BufferedImage imgBuffer = ImageIO.read(fileEntry);
+
+
+                    byte[] getBytes  =(byte[]) imgBuffer.getRaster().getDataElements(0,0,imgBuffer.getWidth(),imgBuffer.getHeight(), null);
+
+
+                    int count =0;
+                    for(int j = 15; j >= 0; j--) {
+                        for (int i = 0; i < 32; i++) {
+                            frame.matrix[i][j][0] = getBytes[count] & 0xFF;
+                            frame.matrix[i][j][1] = getBytes[count + 1] & 0xFF;
+                            frame.matrix[i][j][2] = getBytes[count + 2] & 0xFF;
+
+
+                            count += 3;
+                        }
+                    }
+                    frame.frame_index = frameCount;
+                    data.frames.add(frame);
+
+                    frameCount++;
+
+
+                }
+            }
+
 
 
         } else {
@@ -181,6 +266,9 @@ public class Controller implements Initializable {
 
     @FXML //saving animation
     public void onButtonSaveClicked() {
+
+
+
 
     }
 
