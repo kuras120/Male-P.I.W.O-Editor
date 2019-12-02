@@ -22,6 +22,7 @@ import java.io.*;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Enumeration;
+import java.util.Collections;
 import java.util.ResourceBundle;
 import java.util.zip.*;
 
@@ -366,6 +367,25 @@ public class Controller implements Initializable {
 
         return buffer;
     }
+
+    @FXML
+    public void moveBack() {
+        if(selectedFrame > 0) {
+            Collections.swap(data.frames, selectedFrame, selectedFrame-1);
+            selectedFrame--;
+            frameCounter.setText(String.valueOf(selectedFrame + 1) + '/' + String.valueOf(data.frames.size()));
+        }
+    }
+
+    @FXML
+    public void moveNext() {
+        if(selectedFrame < data.frames.size()-1) {
+            Collections.swap(data.frames, selectedFrame, selectedFrame+1);
+            selectedFrame++;
+            frameCounter.setText(String.valueOf(selectedFrame + 1) + '/' + String.valueOf(data.frames.size()));
+        }
+    }
+
     @FXML //saving animation
     public void onButtonSaveClicked() throws Exception{
 

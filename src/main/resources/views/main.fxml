@@ -49,8 +49,8 @@
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font></Button>
-                  <Button fx:id="btnConnectRby111" onAction="#onButtonRspClicked" prefHeight="27.0" prefWidth="178.0" style="-fx-font: 15 arial" text="Move frame backwards" />
-                  <Button fx:id="btnConnectRby1111" onAction="#onButtonRspClicked" style="-fx-font: 15 arial" text="Move frame forward" />
+                  <Button fx:id="moveBack" onAction="#moveBack" prefHeight="27.0" prefWidth="178.0" style="-fx-font: 15 arial" text="Move frame backwards" />
+                  <Button fx:id="moveNext" onAction="#moveNext" style="-fx-font: 15 arial" text="Move frame forward" />
                </children>
                <padding>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
