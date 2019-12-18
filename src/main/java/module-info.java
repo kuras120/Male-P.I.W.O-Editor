@@ -5,7 +5,6 @@ module malepiwo {
     requires com.google.gson;
     requires java.desktop;
 
-
     opens editor to javafx.fxml;
     exports editor;
 }
